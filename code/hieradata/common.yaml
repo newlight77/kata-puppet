@@ -1,0 +1,15 @@
+---
+ntp_servers:
+  - pool.ntp.org
+  - fr.pool.ntp.org
+
+servers:
+  server1:
+    server_name: "server1111"
+    nbinstances: 1
+  server2:
+    server_name: "server2222"
+    nbinstances: 2
+  server3:
+    server_name: "server3333"
+    nbinstances: 3
