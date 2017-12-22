@@ -5,11 +5,14 @@ ntp_servers:
 
 servers:
   server1:
+    name : "name1"
     server_name: "server1111"
     nbinstances: 1
   server2:
+    name : "name2"
     server_name: "server2222"
     nbinstances: 2
   server3:
+    name : "name3"
     server_name: "server3333"
     nbinstances: 3
