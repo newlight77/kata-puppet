@@ -1,0 +1,24 @@
+{
+<% @policies.each_with_index do |(pl_key, pl_value),index| %>
+  "<%= pl_key %>": {
+    "access_rights": {
+      "<%= pl_key %>": {
+        "allowed_urls": [],
+        "api_id": "<%= pl_key %>",
+        "api_name": "<%= pl_key %>",
+        "versions": [
+          "Default"
+        ]
+      }
+    },
+    "active": <%= pl_value["active"] %>,
+    "name": "default",
+    "rate": <%= pl_value["rate"] %>,
+    "per": <%= pl_value["per"] %>,
+    "quota_max": <%= pl_value["quota_max"] %>,
+    "quota_renewal_rate": <%= pl_value["quota_renewal_rate"] %>,
+    "tags": ["Oauth Flow 4"]
+  }
+  <% if index != @policies.length - 1 -%>,<% end -%>
+<% end -%>
+}

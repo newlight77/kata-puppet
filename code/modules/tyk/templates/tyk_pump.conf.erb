@@ -1,0 +1,25 @@
+{
+  "analytics_storage_type": "redis",
+  "analytics_storage_config": {
+    "type": "redis",
+    "host": "<%= @redis_host %>",
+    "port": <%= @redis_port %>,
+    "hosts": null,
+    "username": "",
+    "password": "",
+    "database": 0,
+    "optimisation_max_idle": 2000,
+    "optimisation_max_active": 3000,
+    "enable_cluster": false
+  },
+  "purge_delay": 10,
+  "pumps": {
+    "csv": {
+      "name": "csv",
+      "meta": {
+        "csv_dir": "<%= @tyk_log_dir %>"
+      }
+    }
+  },
+  "dont_purge_uptime_data": true
+}

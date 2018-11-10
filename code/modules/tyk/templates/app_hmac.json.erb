@@ -1,0 +1,61 @@
+{
+    "name": "<%= @app_name %>_hmac",
+    "api_id": "<%= @api_id %>",
+    "org_id": "",
+    "definition": {
+        "location": "header",
+        "key": "version"
+    },
+    "enable_signature_checking": true,
+    "hmac_allowed_clock_skew": <%= @hmac_allowed_clock_skew %>, 
+    "auth": {
+        "auth_header_name": "Authorization"
+    },
+    "version_data": {
+        "not_versioned": true,
+        "versions": {
+            "Default": {
+                "name": "Default",
+                "expires": "3000-01-02 15:04",
+                "use_extended_paths": true,
+                "extended_paths": {
+                    "ignored": [],
+                    "white_list": [<% @whitelist.each_with_index do |(wl_key, wl_value),index| %>
+                                                                   <%= wl_value.to_json -%><% if index != @whitelist.length - 1 -%>,<% end -%>
+                                                           <% end -%>],
+                    "black_list": []
+                }
+            }
+        }
+    },
+    "proxy": {
+        "listen_path": "<%= @listen_path %>",
+        "target_url": "<%= @target_url %>",
+        "strip_listen_path": true
+    },
+
+    <%if @with_hmac_v1 or @with_middleware then -%>
+    "custom_middleware": {
+        <% if @with_hmac_v1 then -%>
+        "pre": [
+            {
+                "name": "checkHmacV1Middleware",
+                "path": "<%= @tyk_parent_dir %>/middleware/checkHmacV1Middleware.js",
+                "require_session": false
+            }
+        ]
+        <% end %>
+        <% if @with_middleware then -%> <% if @with_hmac_v1 then -%>,<% end %>
+        "post": [
+            {
+                "name": "getUserIdMiddleware",
+                "path": "<%= @tyk_parent_dir %>/middleware/getUserIdTykMiddleware.js",
+                "require_session": true
+            }
+        ]
+        <% end %>
+    },
+    <% end %>
+
+    "enable_batch_request_support": false
+}

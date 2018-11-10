@@ -1,0 +1,54 @@
+{
+    "name": "<%= @app_name %>_auth",
+    "api_id": "<%= @api_id %>",
+    "org_id": "",
+    "definition": {
+        "location": "header",
+        "key": "version"
+    },
+    <% if @use_param then %>
+    "auth": {
+    	"use_param": true,
+        "param_name": "<%= @param_name %>"
+    }
+    <% else %>
+    "auth": {
+            "auth_header_name": "Authorization"
+    }
+    <% end %>
+    ,
+    "version_data": {
+        "not_versioned": true,
+        "versions": {
+            "Default": {
+                "name": "Default",
+                "expires": "3000-01-02 15:04",
+                "use_extended_paths": true,
+                "extended_paths": {
+                    "ignored": [],
+                    "white_list": [<% @whitelist.each_with_index do |(wl_key, wl_value),index| %>
+                                <%= wl_value.to_json -%><% if index != @whitelist.length - 1 -%>,<% end -%>
+                        <% end -%>],
+                    "black_list": []
+                }
+            }
+        }
+    },
+    "proxy": {
+        "listen_path": "<%= @listen_path %>",
+        "target_url": "<%= @target_url %>",
+        "strip_listen_path": true
+    },
+    <% if @with_middleware then %>
+    "custom_middleware": {
+        "post": [
+            {
+                "name": "getUserIdMiddleware",
+                "path": "<%= @tyk_parent_dir %>/middleware/getUserIdCCUMiddleware.js",
+                "require_session": true
+            }
+        ]
+    },
+    <% end %>
+    "enable_batch_request_support": false
+}

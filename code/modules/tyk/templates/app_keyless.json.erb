@@ -1,0 +1,33 @@
+{
+    "name": "<%= @app_name %>_keyless",
+    "api_id": "1",
+    "org_id": "",
+    "definition": {
+        "location": "header",
+        "key": "version"
+    },
+    "use_keyless": true,
+    "auth": {
+    },
+    "version_data": {
+        "not_versioned": true,
+        "versions": {
+            "Default": {
+                "name": "Default",
+                "expires": "3000-01-02 15:04",
+                "use_extended_paths": true,
+                "extended_paths": {
+                    "ignored": [],
+                    "white_list": [],
+                    "black_list": []
+                }
+            }
+        }
+    },
+    "proxy": {
+        "listen_path": "<%= @listen_path %>",
+        "target_url": "<%= @target_url %>",
+        "strip_listen_path": <%= @strip_listen_path %>
+    },
+    "enable_batch_request_support": false
+}

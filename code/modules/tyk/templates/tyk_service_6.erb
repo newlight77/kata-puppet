@@ -1,0 +1,58 @@
+#!/bin/bash
+# init script for Tyk.
+# chkconfig: 2345 90 10
+# description: Tyk
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+cmd="<%= @tyk_parent_dir %>/tyk --conf=<%= @tyk_parent_dir %>/tyk.conf"
+user=<%= @user %>
+
+start() {
+    echo -n $"Starting Tyk: "
+    daemon --user $user $cmd | tee -a <%= @tyk_parent_dir %>/tyk.log &
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping Tyk: "
+    if kill `ps aux | grep '<%= @tyk_parent_dir %>/tyk --conf=<%= @tyk_parent_dir %>/tyk.conf' | grep -v ';' | grep -v 'grep' | awk '{print $2}'`; then
+      RETVAL=0
+    else
+      RETVAL=1
+    fi
+    echo
+    return $RETVAL
+}
+
+status() {
+    if ps aux | grep '<%= @tyk_parent_dir %>/tyk --conf=<%= @tyk_parent_dir %>/tyk.conf' | grep -v ';' | grep -qv 'grep'; then
+      RETVAL=0
+      echo -n $"Tyk is running"
+    else
+      RETVAL=1
+      echo -n $"Tyk is stopped"
+    fi
+    echo
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    status)
+        status
+    ;;
+    *)
+        echo $"Usage: $0 {start|stop|status}"
+        exit 1
+esac
+
+exit $RETVAL

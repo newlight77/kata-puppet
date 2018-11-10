@@ -1,0 +1,22 @@
+#!/bin/bash
+
+MAX_DURATION_IN_MINUTES=<%= @provision_max_duration_in_minutes %>
+API_ID="$1"
+USERNAME="$2"
+DATE_FILE="/USR/newtprod/action_basic_auth-${API_ID}-${USERNAME}"
+
+[[ -f $DATE_FILE ]] || touch $DATE_FILE
+
+OLD_DATE=$(cat $DATE_FILE)
+if [[ ! $OLD_DATE ]]; then
+    OLD_DATE=0
+    echo $OLD_DATE > $DATE_FILE
+fi
+
+NEW_DATE=$(date +"%s")
+
+result=$((( $NEW_DATE - $OLD_DATE >= (${MAX_DURATION_IN_MINUTES}*60) )) && echo "OK" || echo "KO")
+
+[[ $result = "OK" ]] && echo $NEW_DATE > $DATE_FILE
+
+echo $result

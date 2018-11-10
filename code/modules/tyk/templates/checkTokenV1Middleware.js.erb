@@ -1,0 +1,70 @@
+// ---- Check token partenaire (Tyk V2+) middleware -----
+// Vérifie si le token est connu de Tyk sinon appelle le composant mediation-api
+// pour vérifier auprès du partenaire IDP.
+// Si OK, le token est créé par l'API puis on rend la main à Tyk
+// A placer en middleware type PRE dans la configuration de chaque API accessible en oAuth
+
+var checkTokenV1Middleware = new TykJS.TykMiddleware.NewMiddleware({});
+
+checkTokenV1Middleware.NewProcessRequest(function(request, session) {
+	var API_ID = 'openApi';
+
+	if (request.Headers["Authorization"]) {
+		var tab = request.Headers["Authorization"][0].split(' ');
+		if (tab.length == 2) {
+			var token = tab[1];
+			var keyData = JSON.parse(TykGetKeyData(token, API_ID));
+			var blnCheckToken = false;
+			switch (true) {
+			case ((keyData.status) && (keyData.status == 'error')):
+				// Token inconnu
+				blnCheckToken = true;
+				break;
+			case (new Date().getTime() >= keyData.expires * 1000):
+				// Token expiré
+				// Si un token Provider est spécifié, on relance la vérification
+				// chez le partenaire
+				// sinon, il s'agit d'un token Hub, on laisse passer
+				if (keyData.meta_data) {
+					if (keyData.meta_data.tokenProvider) {
+						blnCheckToken = true;
+					}
+				}
+				break;
+			}
+			if (blnCheckToken) {
+				var data = {
+					"token" : token,
+					"apiId" : API_ID
+				};
+				if (keyData.meta_data) {
+					if (keyData.meta_data.tokenProvider) {
+						data.tokenProvider = keyData.meta_data.tokenProvider;
+					}
+				}
+				requestCheckToken = {
+					"Method" : "POST",
+					"Body" : JSON.stringify(data),
+					"Headers" : { "Content-Type": "application/json" },
+					"Domain" : "http://<%= @token_domain %>",
+					"Resource" : "<%= @token_url_path %>",
+					"FormData" : {}
+				};
+
+				responseCheckToken = JSON.parse(TykMakeHttpRequest(JSON
+						.stringify(requestCheckToken)));
+
+				if (responseCheckToken.Code == 201) {
+					responseCheckTokenBody = JSON
+							.parse(responseCheckToken.Body);
+				} else {
+					log("ERROR checkToken pour Authorization Header Bearer "
+							+ token + " Service Response Code "
+							+ responseCheckToken.Code + ", Body : "
+							+ responseCheckToken.Body);
+				}
+			}
+		}
+	}
+	return checkTokenV1Middleware.ReturnData(request, session.meta_data);
+});

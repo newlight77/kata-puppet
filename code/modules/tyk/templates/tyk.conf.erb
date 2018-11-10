@@ -1,0 +1,45 @@
+{
+  "listen_port": <%= @port %>,
+  "secret": "<%= @token %>",
+  "template_path": "<%= @tyk_template_dir %>",
+  "tyk_js_path": "<%= @tyk_parent_dir %>/js/tyk.js",
+  "use_db_app_configs": false,
+  "app_path": "<%= @tyk_parent_dir %>/apps",
+  "middleware_path": "<%= @tyk_parent_dir %>/middleware",
+  "storage": {
+    "type": "redis",
+    "host": "<%= @redis_host %>",
+    "port": <%= @redis_port %>,
+    "username": "",
+    "password": "<%= @redis_pwd %>",
+    "database": 0,
+    "optimisation_max_idle": 2000,
+    "optimisation_max_active":3000
+  },
+  "policies": {
+    "policy_source": "file",
+    "policy_record_name": "<%= @tyk_parent_dir %>/policies/policies.json"
+  },
+  "enable_analytics": true,
+  "oauth_refresh_token_expire": 15552000,
+  "analytics_config": {
+    "type": "csv",
+    "csv_dir": "/tmp",
+    "mongo_url": "",
+    "mongo_db_name": "",
+    "mongo_collection": "",
+    "purge_delay": -1,
+    "ignored_ips": []
+  },
+  "health_check": {
+    "enable_health_checks": true,
+    "health_check_value_timeouts": 60
+  },
+  "pid_file_location": "<%= @tyk_parent_dir %>/tyk-gateway.pid",
+  "optimisations_use_async_session_write": true,
+  "enable_jsvm": true,
+  "oauth_token_expire": <%= @tyk_at_duration %>,
+  "oauth_refresh_token_expire": <%= @tyk_rt_duration %>,
+  "allow_insecure_configs": <%= @tyk_insecure %>,
+  "close_connections": true
+}

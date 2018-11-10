@@ -1,0 +1,26 @@
+{
+  "analytics_storage_type": "redis",
+  "analytics_storage_config": {
+    "type": "redis",
+    "enable_cluster": true,
+    "hosts": {
+    <%= @redis_host.map{|host, port| host=scope.call_function('resolvedns', host)
+"\"#{host}\": \"#{port}\""}.join(",\n") %>
+    },
+    "username": "",
+    "password": "",
+    "database": 0,
+    "optimisation_max_idle": 2000,
+    "optimisation_max_active": 3000
+  },
+  "purge_delay": 10,
+  "pumps": {
+    "csv": {
+      "name": "csv",
+      "meta": {
+        "csv_dir": "<%= @tyk_log_dir %>"
+      }
+    }
+  },
+  "dont_purge_uptime_data": true
+}

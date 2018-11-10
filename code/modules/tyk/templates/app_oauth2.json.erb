@@ -1,0 +1,71 @@
+{
+    "name": "<%= @app_name %>_oauth2",
+    "api_id": "<%= @api_id %>",
+    "org_id": "",
+    "definition": {
+        "location": "header",
+        "key": "version"
+    },
+    "use_oauth2": true,
+    "oauth_meta": {
+    	"allowed_access_types": [
+      		"authorization_code",
+      		"refresh_token",
+      		"password",
+          "client_credentials"
+      ],
+    	"allowed_authorize_types": [
+      		"code",
+      		"token"
+    	],
+    	"auth_login_redirect": "<%= @auth_login_redirect %>"
+  	},
+
+    "notifications": {
+    	"shared_secret": "<%= @tyk_shared_secret %>",
+    	"oauth_on_keychange_url": "<%= @oauth2_on_keychange_url %>"
+  	},
+
+    "version_data": {
+        "not_versioned": true,
+        "versions": {
+            "Default": {
+                "name": "Default",
+                "expires": "3000-01-02 15:04",
+                "use_extended_paths": true,
+                "extended_paths": {
+                    "ignored": [],
+                    "white_list": [<% @whitelist.each_with_index do |(wl_key, wl_value),index| %>
+                                <%= wl_value.to_json -%><% if index != @whitelist.length - 1 -%>,<% end -%>
+                        <% end -%>],
+                    "black_list": []
+                }
+            }
+        }
+    },
+    "proxy": {
+        "listen_path": "<%= @listen_path %>",
+        "target_url": "<%= @target_url %>",
+        "strip_listen_path": true
+    },
+    "custom_middleware": {
+        <% if @with_middleware then %>
+        "post": [
+            {
+                "name": "getUserIdMiddleware",
+                "path": "<%= @tyk_parent_dir %>/middleware/getUserIdTykMiddleware.js",
+                "require_session": true
+            }
+        ],
+        <% end %>
+        "pre": [
+        	{
+                 "name": "checkTokenV1Middleware",
+                 "path": "<%= @tyk_parent_dir %>/middleware/checkTokenV1Middleware.js",
+                 "require_session": false
+      		}
+    	]
+
+    },
+    "enable_batch_request_support": false
+}

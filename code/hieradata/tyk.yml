@@ -1,0 +1,175 @@
+tyk_tarball: "tyk.linux.amd64-2.2.0.0"
+tyk_parent_dir: "/USR/newtprod/tyk"
+tyk_binary_dir: "/opt/tyk-gateway"
+tyk_port: 8082
+tyk_log_dir: "/VAR/newtprod/tyk"
+posc_notification_path: "/mediation/v1/provisioning"
+tyk_url: "http://%{hiera('tyk_host')}:%{hiera('tyk_port')}"
+posc_notification_url: "%{hiera('tyk_url')}%{hiera('posc_notification_path')}"
+
+posc_tyk_add_accesstoken_url: "%{hiera('tyk_url')}/tyk/keys"
+posc_tyk_create_client_url: "%{hiera('tyk_url')}/tyk/oauth/clients/create"
+posc_tyk_authorize_client_url: "%{hiera('tyk_url')}/%{hiera('tyk_oauth2_listen_path')}/tyk/oauth/authorize-client/"
+posc_tyk_allowance_by_access_token: 13
+posc_tyk_rate_by_access_token: 13
+posc_tyk_per_by_access_token: 1
+posc_tyk_api_by_access_token: openApi
+posc_tyk_quota_max: 60
+posc_tyk_quota_remaining: 60
+posc_tyk_quota_renewal_rate: 60
+posc_tyk_temp_ttl: 180
+posc_tyk_partnerb_allowance_by_utilisateur_id: 10
+posc_tyk_partnerb_rate_by_utilisateur_id: 10
+posc_tyk_per_by_utilisateur_id: 60
+posc_tyk_api_by_utilisateur_id: 1
+tyk_hmac_allowed_clock_skew: 120000
+url_baseCoeur_tokenCCU: "/newton-datastore-web/v1/authtokenapis/"
+url_baseCoeur_tokenTyk: "/newton-datastore-web/v1/authtokenapis/"
+posc_tyk_open_api_listen_url: "/hub/v2"
+# 180 days
+tyk_rt_duration: 36288000
+# 90 days
+tyk_at_duration: 23328000
+tyk_rpm_name: "tyk-gateway"
+tyk_rpm_version: 2.5.0
+tyk_pump_rpm_version: 0.5.0
+
+## ~~~~~~~~~~~~~~~ ##
+## OAUTH2 With Tyk ##
+## ~~~~~~~~~~~~~~~ ##
+tyk_oauth2_listen_path: "hub/v1"
+auth_login_redirect: "%{hiera('posc_dashboard_url')}/page/external/client/authorize"
+oauth2_on_keychange_url: "%{hiera('posc_provisioning_url')}/v1/external/notify"
+
+
+# Limit for tyk
+tyk_nofile: 32768
+tyk_nproc: 32768
+limits:
+  'newtprod':
+    nofile:
+      soft: "%{hiera('tyk_nofile')}"
+      hard: "%{hiera('tyk_nofile')}"
+    nproc:
+      soft: "%{hiera('tyk_nproc')}"
+      hard: "%{hiera('tyk_nproc')}"
+
+# tyk policies
+tyk_policies:
+  openApi:
+    active: true
+    rate: 10
+    per: 1
+    quota_max: -1
+    quota_renewal_rate: 3600
+
+tyk_insecure: "true"
+
+## ~~~ ##
+## TYK ##
+## ~~~ ##
+tyk_redis_cluster_enable: true
+tyk_redis_instance1_host:
+  redis: 6379
+tyk_redis_master_host: med1
+
+tyk_apps_basic:
+  restapi_docs:
+    listen_path: "/rest-api/docs/"
+    target_url: "http://stubs.dev.hub.docapost.io:3011/api/"
+    api_id: api_docs
+  api_docs:
+    listen_path: "/api/docs/"
+    target_url: "http://stubs.dev.hub.docapost.io:3011/api/"
+    api_id: api_docs
+  external_api_docs:
+    listen_path: "/external-api/docs/"
+    target_url: "http://stubs.dev.hub.docapost.io:3011/external-api/"
+    api_id: external_api_docs
+  external_api_docs_mock:
+    listen_path: "/external-api/docs/mocks/"
+    target_url: "http://stubs.dev.hub.docapost.io:3010/"
+    api_id: external_api_docs
+tyk_apps_hmac:
+  external_api_mock:
+    listen_path: "/external-api/mocks/"
+    target_url: "http://stubs.dev.hub.docapost.io:3010/"
+    api_id: external_api_mocks
+  provisioning_vsmp_contract:
+    listen_path: "/mediation/v1/hmac/vsmp/"
+    target_url: "%{hiera('posc_contract_api_url')}/v1/"
+    api_id: vsmp
+    with_middleware: true
+    whitelist:
+      crud_contracts:
+        path: "/mediation/v1/hmac/vsmp/contracts"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_number:
+        path: "/mediation/v1/hmac/vsmp/contracts/{contractNumber}"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_number_version:
+        path: "/mediation/v1/hmac/vsmp/contracts/{contractNumber}/{contractVersion}"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_number_version_sepa:
+        path: "/mediation/v1/hmac/vsmp/contracts/{contractNumber}/{contractVersion}/SEPA"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_number_sepa:
+        path: "/mediation/v1/hmac/vsmp/contracts/{contractNumber}/SEPA"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_sepa_mandate:
+        path: "/mediation/v1/hmac/vsmp/{contractNumber}/{contractVersion}/SEPA/{mandateRum}"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_number_crs:
+        path: "/mediation/v1/hmac/vsmp/{contractNumber}/crs"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"
+      crud_contract_number_status:
+        path: "/mediation/v1/hmac/vsmp/{contractNumber}/status"
+        method_actions:
+          GET:
+            action: "no_action"
+          POST:
+            action: "no_action"
+          PUT:
+            action: "no_action"

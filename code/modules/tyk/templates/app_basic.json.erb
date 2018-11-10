@@ -1,0 +1,46 @@
+{
+    "name": "<%= @app_name %>_basic",
+    "api_id": "<%= @api_id %>",
+    "org_id": "",
+    "definition": {
+        "location": "header",
+        "key": "version"
+    },
+    
+    "use_basic_auth": true,
+    "auth": {
+        "auth_header_name": "Authorization"
+    },
+    "version_data": {
+        "not_versioned": true,
+        "versions": {
+            "Default": {
+                "name": "Default",
+                "expires": "3000-01-02 15:04",
+                "use_extended_paths": true,
+                "extended_paths": {
+                    "ignored": [],
+                    "white_list": [],
+                    "black_list": []
+                }
+            }
+        }
+    },
+    "proxy": {
+        "listen_path": "<%= @listen_path %>",
+        "target_url": "<%= @target_url %>",
+        "strip_listen_path": true
+    },
+    <% if @with_middleware then %>
+    "custom_middleware": {
+        "post": [
+            {
+                "name": "getUserIdMiddleware",
+                "path": "<%= @tyk_parent_dir %>/middleware/getUserIdTykMiddleware.js",
+                "require_session": true
+            }
+        ]
+    },
+    <% end %>
+    "enable_batch_request_support": false
+}
