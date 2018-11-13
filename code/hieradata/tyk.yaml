@@ -39,7 +39,7 @@ tyk_rpm_name: "tyk-gateway"
 tyk_rpm_version: 2.6.4
 tyk_pump_rpm_version: 0.5.4
 tyk_rpm_file: "https://packagecloud.io/tyk/tyk-gateway/packages/el/7/tyk-gateway-2.6.4-1.x86_64.rpm/download.rpm"
-tyk_pump_rpm_file: "https://packagecloud.io/tyk/tyk-pump/packages/el/7/tyk-pump-0.5.4-1.arm64.rpm/download.rpm"
+tyk_pump_rpm_file: "https://packagecloud.io/tyk/tyk-pump/packages/el/7/tyk-pump-0.5.4-1.x86_64.rpm/download.rpm"
 
 ## ~~~~~~~~~~~~~~~ ##
 ## OAUTH2 With Tyk ##
@@ -77,9 +77,11 @@ tyk_insecure: "true"
 ## ~~~ ##
 tyk_redis_cluster_enable: true
 tyk_redis_instance1_host:
-  redis: 6379
-tyk_redis_master_host: med1
+  redis.docker: 6379
+tyk_redis_master_host: redis.docker
 
+redis_pwd: ""
+redis_port: 6379
 
 tyk_apps_basic:
   restapi_docs:

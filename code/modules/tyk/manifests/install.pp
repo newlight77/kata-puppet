@@ -111,6 +111,22 @@ class tyk::install (
       content => template('tyk/tyk.conf.erb'),
       notify  => Service["tyk"]
     }
+  }->
+  tyk::tyk_middleware { 'getUserIdCCUMiddleware':
+    tyk_parent_dir      => $tyk_parent_dir,
+    user                => $user,
+    group               => $group,
+    posc_datastore_host => $posc_datastore_host,
+    posc_datastore_port => $posc_datastore_port,
+    service_path        => $url_baseCoeur_tokenCCU
+  }->
+  tyk::tyk_middleware { 'getUserIdTykMiddleware':
+    tyk_parent_dir      => $tyk_parent_dir,
+    user                => $user,
+    group               => $group,
+    posc_datastore_host => $posc_datastore_host,
+    posc_datastore_port => $posc_datastore_port,
+    service_path        => $url_baseCoeur_tokenTyk
   }
 
 

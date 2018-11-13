@@ -19,13 +19,15 @@ services:
     volumes:
       - ./puppet-agent/puppet.conf:/etc/puppetlabs/puppet/puppet.conf
       - ./data/agent-ssl:/etc/puppetlabs/puppet/ssl/
+      - ./repo:/opt/userdemo/repo-rpm
     networks:
       puppet:
-        ipv4_address: 172.28.5.4
+        ipv4_address: 172.28.5.5
     extra_hosts:
       - "puppetmaster.docker:172.28.5.1"
       - "repo.docker:172.28.5.2"
       - "proxy.docker:172.28.5.3"
+      - "redis.docker:172.28.5.4"
     command: "agent --verbose --no-daemonize --summarize"
 
   puppetmaster:
@@ -48,6 +50,7 @@ services:
     extra_hosts:
       - "repo.docker:172.28.5.2"
       - "proxy.docker:172.28.5.3"
+      - "redis.docker:172.28.5.4"
 
   repo:
     container_name: repo
@@ -60,25 +63,28 @@ services:
     cap_add:
       - SYS_ADMIN
     volumes:
-      - ./repo:/var/newtprod/repo-rpm/posc/local
+      - ./repo:/opt/userdemo/repo-rpm
     environment:
       - FACTER_yum_enable=false
       - FACTER_env=dev
     extra_hosts:
       - "puppetmaster.docker:172.28.5.1"
       - "proxy.docker:172.28.5.3"
+      - "redis.docker:172.28.5.4"
     networks:
       puppet:
         ipv4_address: 172.28.5.2
     command: "agent --verbose --no-daemonize --summarize"
 
   proxy:
+    container_name: proxy
     image: puppet/puppet-agent-centos
     hostname: proxy.docker
     ports:
       - "9090:9090"
-    depends_on:
-      - puppetmaster
+    volumes:
+      - ./puppet-agent/puppet.conf:/etc/puppetlabs/puppet/puppet.conf
+      - ./data/agent-ssl:/etc/puppetlabs/puppet/ssl/
     cap_add:
       - SYS_ADMIN
     networks:
@@ -90,6 +96,27 @@ services:
     extra_hosts:
       - "puppetmaster.docker:172.28.5.1"
       - "repo.docker:172.28.5.2"
+      - "redis.docker:172.28.5.4"
+    command: "agent --verbose --no-daemonize --summarize"
+
+  redis:
+    container_name: redis
+    image: redis:4.0.5-alpine
+    hostname: redis.docker
+    networks:
+      puppet:
+        ipv4_address: 172.28.5.4
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../data/redis:/data
+    restart: always
+    extra_hosts:
+      - "puppetmaster.docker:172.28.5.1"
+      - "repo.docker:172.28.5.2"
+      - "proxy.docker:172.28.5.3"
+      - "agent.docker:172.28.5.5"
+    command: ["redis-server", "--appendonly", "yes"]
 
 # networks:
 #   default:

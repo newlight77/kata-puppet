@@ -18,7 +18,7 @@ define tyk::delete_key (
   }
 
   $curl = "curl -X DELETE http://${tyk_host}:${tyk_port}/tyk/keys/${final_key} -H 'x-tyk-authorization: ${tyk_token}' "
-  $diffCmd = "test `/bin/bash /opt/newtprod/tyk_diff_dates.sh delete_${api_id} ${title}` = \"OK\""
+  $diffCmd = "test `/bin/bash /opt/userdemo/tyk_diff_dates.sh delete_${api_id} ${title}` = \"OK\""
 
   if undef != $debug and $debug {
     notify {"[TYK][DELETE_KEY] Executing curl : ${curl}": }
