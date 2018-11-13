@@ -1,23 +1,36 @@
 version: '2'
 
+networks:
+  puppet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+          ip_range: 172.28.5.0/24
+          gateway: 172.28.5.254
 
 services:
   puppetagent:
     container_name: agent
-    hostname: agent
-    image: puppet/puppet-agent
+    hostname: agent.docker
+    image: puppet/puppet-agent-centos
     ports:
       - 8140
     volumes:
       - ./puppet-agent/puppet.conf:/etc/puppetlabs/puppet/puppet.conf
       - ./data/agent-ssl:/etc/puppetlabs/puppet/ssl/
     networks:
-      - default
+      puppet:
+        ipv4_address: 172.28.5.4
+    extra_hosts:
+      - "puppetmaster.docker:172.28.5.1"
+      - "repo.docker:172.28.5.2"
+      - "proxy.docker:172.28.5.3"
     command: "agent --verbose --no-daemonize --summarize"
 
   puppetmaster:
-    container_name: puppet
-    hostname: puppet
+    container_name: master
+    hostname: puppetmaster.docker
     image: puppet/puppetserver-standalone
     ports:
       - "8140:8140"
@@ -30,8 +43,54 @@ services:
       - ./data/server-ssl:/etc/puppetlabs/puppet/ssl/
       - ./data/server-data:/opt/puppetlabs/server/data/puppetserver/
     networks:
-      - default
+      puppet:
+        ipv4_address: 172.28.5.1
+    extra_hosts:
+      - "repo.docker:172.28.5.2"
+      - "proxy.docker:172.28.5.3"
 
-networks:
-  default:
-    driver: bridge
+  repo:
+    container_name: repo
+    image: puppet/puppet-agent-centos
+    hostname: repo.docker
+    ports:
+      - 8140
+    depends_on:
+      - puppetmaster
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - ./repo:/var/newtprod/repo-rpm/posc/local
+    environment:
+      - FACTER_yum_enable=false
+      - FACTER_env=dev
+    extra_hosts:
+      - "puppetmaster.docker:172.28.5.1"
+      - "proxy.docker:172.28.5.3"
+    networks:
+      puppet:
+        ipv4_address: 172.28.5.2
+    command: "agent --verbose --no-daemonize --summarize"
+
+  proxy:
+    image: puppet/puppet-agent-centos
+    hostname: proxy.docker
+    ports:
+      - "9090:9090"
+    depends_on:
+      - puppetmaster
+    cap_add:
+      - SYS_ADMIN
+    networks:
+      puppet:
+        ipv4_address: 172.28.5.3
+    environment:
+      - FACTER_yum_enable=false
+      - FACTER_env=dev
+    extra_hosts:
+      - "puppetmaster.docker:172.28.5.1"
+      - "repo.docker:172.28.5.2"
+
+# networks:
+#   default:
+#     driver: bridge

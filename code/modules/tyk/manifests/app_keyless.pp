@@ -13,7 +13,7 @@ define tyk::app_keyless (
   $port = hiera('tyk_port'),
   $user = hiera('posc_generic_user'),
   $group = hiera('posc_generic_group')
-  
+
 ) {
 
   file { "${tyk_parent_dir}/apps/app_${app_name}_keyless.json":
@@ -22,7 +22,6 @@ define tyk::app_keyless (
     mode    => '0644',
     owner   => $user,
     group   => $group,
-    require => Class['::tyk::install'],
   }~>
   exec { "Tyk reload for ${app_name}_keyless":
     command => "curl -H \"X-Tyk-Authorization: ${token}\" http://localhost:${port}/tyk/reload/",

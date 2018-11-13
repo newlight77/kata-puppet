@@ -25,7 +25,6 @@ define tyk::app_auth (
     mode    => '0644',
     owner   => $user,
     group   => $group,
-    require => Class['::tyk::install'],
   }~>
   exec { "Tyk reload for ${app_name}_auth":
     command => "curl -H \"X-Tyk-Authorization: ${token}\" http://localhost:${port}/tyk/reload/",

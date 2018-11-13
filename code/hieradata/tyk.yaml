@@ -1,11 +1,16 @@
-tyk_tarball: "tyk.linux.amd64-2.2.0.0"
-tyk_parent_dir: "/USR/newtprod/tyk"
+# tyk_tarball: "tyk-gateway-2.6.4-1.arm64"
+tyk_parent_dir: "/opt/userdemo/tyk"
 tyk_binary_dir: "/opt/tyk-gateway"
 tyk_port: 8082
-tyk_log_dir: "/VAR/newtprod/tyk"
+tyk_log_dir: "/var/userdemo/tyk"
 posc_notification_path: "/mediation/v1/provisioning"
 tyk_url: "http://%{hiera('tyk_host')}:%{hiera('tyk_port')}"
 posc_notification_url: "%{hiera('tyk_url')}%{hiera('posc_notification_path')}"
+
+tyk_token_domain: "localhost:9999"
+tyk_token_url_path: "/oauth/token"
+tyk_token: JCtdu7mM21t3f5vX8QLQ7LerBBg7k98C
+
 
 posc_tyk_add_accesstoken_url: "%{hiera('tyk_url')}/tyk/keys"
 posc_tyk_create_client_url: "%{hiera('tyk_url')}/tyk/oauth/clients/create"
@@ -31,8 +36,10 @@ tyk_rt_duration: 36288000
 # 90 days
 tyk_at_duration: 23328000
 tyk_rpm_name: "tyk-gateway"
-tyk_rpm_version: 2.5.0
-tyk_pump_rpm_version: 0.5.0
+tyk_rpm_version: 2.6.4
+tyk_pump_rpm_version: 0.5.4
+tyk_rpm_file: "https://packagecloud.io/tyk/tyk-gateway/packages/el/7/tyk-gateway-2.6.4-1.x86_64.rpm/download.rpm"
+tyk_pump_rpm_file: "https://packagecloud.io/tyk/tyk-pump/packages/el/7/tyk-pump-0.5.4-1.arm64.rpm/download.rpm"
 
 ## ~~~~~~~~~~~~~~~ ##
 ## OAUTH2 With Tyk ##
@@ -46,7 +53,7 @@ oauth2_on_keychange_url: "%{hiera('posc_provisioning_url')}/v1/external/notify"
 tyk_nofile: 32768
 tyk_nproc: 32768
 limits:
-  'newtprod':
+  'userdemo':
     nofile:
       soft: "%{hiera('tyk_nofile')}"
       hard: "%{hiera('tyk_nofile')}"
@@ -73,6 +80,7 @@ tyk_redis_instance1_host:
   redis: 6379
 tyk_redis_master_host: med1
 
+
 tyk_apps_basic:
   restapi_docs:
     listen_path: "/rest-api/docs/"
@@ -90,6 +98,7 @@ tyk_apps_basic:
     listen_path: "/external-api/docs/mocks/"
     target_url: "http://stubs.dev.hub.docapost.io:3010/"
     api_id: external_api_docs
+
 tyk_apps_hmac:
   external_api_mock:
     listen_path: "/external-api/mocks/"

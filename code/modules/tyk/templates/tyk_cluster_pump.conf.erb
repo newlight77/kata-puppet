@@ -4,7 +4,7 @@
     "type": "redis",
     "enable_cluster": true,
     "hosts": {
-    <%= @redis_host.map{|host, port| host=scope.call_function('resolvedns', host)
+    <%= @redis_host.map{|host, port| host=host
 "\"#{host}\": \"#{port}\""}.join(",\n") %>
     },
     "username": "",

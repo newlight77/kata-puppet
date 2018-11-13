@@ -1,31 +1,21 @@
 class role::tyk {
 
-  $yum_repo_url               = hiera('yum_repo_url')
-  $tarball                    = hiera('tyk_tarball')
   $tyk_parent_dir             = hiera('tyk_parent_dir')
-  $tyk_apps_auth              = hiera('tyk_apps_auth')
 
-  $tyk_apps_oauth2            = hiera('tyk_apps_oauth2')
   $tyk_log_dir                = hiera('tyk_log_dir')
   $user                       = hiera('posc_generic_user')
 
   $tyk_merge_hash             = hiera('tyk_merge_hash', true)
 
   if($tyk_merge_hash) {
-    $tyk_apps_keyless         = hiera_hash('tyk_apps_keyless')
     $tyk_apps_hmac            = hiera_hash('tyk_apps_hmac')
     $tyk_apps_basic           = hiera_hash('tyk_apps_basic')
   } else {
-    $tyk_apps_keyless         = hiera('tyk_apps_keyless')
     $tyk_apps_hmac            = hiera('tyk_apps_hmac')
     $tyk_apps_basic           = hiera('tyk_apps_basic')
   }
 
-  include limits
-
   class { 'tyk::install':
-    source_url                            => "${yum_repo_url}contrib/${tarball}.tar.gz",
-    tarball                               => "${tarball}",
     tyk_parent_dir                        => $tyk_parent_dir,
     user                                  => lookup('posc_generic_user'),
     group                                 => lookup('posc_generic_group'),
@@ -58,27 +48,8 @@ class role::tyk {
     tyk_debug_provision                   => lookup('tyk_debug_provision', { 'default_value' => false } )
   }
 
-  create_resources('tyk::app_auth',    $tyk_apps_auth)
-
-  create_resources('tyk::app_keyless', $tyk_apps_keyless)
-
   create_resources('tyk::app_hmac',    $tyk_apps_hmac)
 
   create_resources('tyk::app_basic',   $tyk_apps_basic)
-  
-  create_resources('tyk::app_oauth2',  $tyk_apps_oauth2)
 
-  file { "/etc/logrotate.d/tyk":
-    ensure  => file,
-    content => template('role/tyk/tyk_logrotate.conf.erb'),
-    require => Class['logrotate']
-  }
-
-  cron{'purge-tyk-pump-log-root':
-    command => "find ${tyk_log_dir}/*.csv -mtime +7 -exec rm {} \\;" ,
-    user    => root,
-    minute  => 12,
-    hour    => 2,
-    ensure  => present
-  }
 }

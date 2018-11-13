@@ -4,6 +4,12 @@
 _#1_ First,
 ```
 docker-compose up -d
+
+docker exec puppet-demo_repo_1 bash
+
+yum install yum-utils createrepo
+/usr/bin/createrepo /var/userdemo/repo-rpm/posc/
+
 ```
 
 _#2_ On client, request for certificate signing,

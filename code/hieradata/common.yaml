@@ -16,3 +16,22 @@ servers:
     name : "name3"
     server_name: "server3333"
     nbinstances: 3
+
+posc_generic_user: "userdemo"
+posc_generic_group: "prod"
+
+posc_datastore_host: "datastore"
+posc_datastore_port: 8080
+
+tomcat_listen_port: 8080
+provision_max_duration_in_minutes: 10
+
+root_dir: "/opt"
+parent_dir: "/opt/userdemo"
+
+var_root_dir: "/var"
+var_parent_dir: "/var/userdemo"
+
+yum_repo_url: "http://repo.docker/dev"
+yum_base_repo_url: "http://repo.docker/base-dev"
+yum_proxy: "http://proxy.docker:9090"

@@ -14,7 +14,7 @@ define tyk::app_basic (
   $port = hiera('tyk_port'),
   $user = hiera('posc_generic_user'),
   $group = hiera('posc_generic_group')
-  
+
 ) {
 
   file { "${tyk_parent_dir}/apps/app_${app_name}_basic.json":
@@ -23,7 +23,6 @@ define tyk::app_basic (
     mode    => '0644',
     owner   => $user,
     group   => $group,
-    require => Class['::tyk::install'],
   }~>
   exec { "Tyk reload for ${app_name}_basic":
     command => "curl -H \"X-Tyk-Authorization: ${token}\" http://localhost:${port}/tyk/reload/",

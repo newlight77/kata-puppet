@@ -1,0 +1,23 @@
+---
+
+# System users default configuration
+system_users:
+  userdemo:
+    group: 'prod'
+    full_name: 'userdemo'
+    authorized_keys:
+      - ''
+    has_sudo: 'true'
+    home: '/home/userdemo'
+
+system_user_default_password: '*'
+system_user_default_password_min_age: 99999
+system_user_default_password_max_age: 99999
+system_user_default_shell: /bin/bash
+system_user_default_group: userdemo
+ssh_target_key_name: id_rsa
+
+private_key_userdemo:
+public_key_userdemo: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCXv7LK23MPda3RoZkJ6dzODfxm3SE9OcdhhLZs9IntjS+V4EBjPjZcR9kG3tKMwdHLPa0uX+aiaeJGATpN9XwnJDrrNt1k85yKSW85jtiAnKl3ZDGU9N5Z7JfiYCTG8kKC1RuVYeKYiukEEhN+rYs0xEu3D7Tgprn4kqkGe4qHiVOdsDx9joO5ZFQY9fxgPir/DDESCw+J9T8tf/90Zo613rq5FjfZZ9KGjEJ3+79jFIU/H2vWoO1dXUnMz0zQsctSODJIt4JDaNLfuBRpA7W0phwRa5f8SUyqFdB330x2UwUf/VpRTlt8IMAVpy7Ev781gZvG5z3GZKno4jrDOkfP
+
+default_rpm: []

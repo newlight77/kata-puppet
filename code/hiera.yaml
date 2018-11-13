@@ -5,3 +5,6 @@
   :datadir: /etc/puppetlabs/code/environments/production/hieradata
 :hierarchy:
   - common
+  - user
+  - tyk
+  - redis

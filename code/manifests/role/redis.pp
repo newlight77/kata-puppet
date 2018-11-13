@@ -10,15 +10,16 @@ class role::redis{
   $redis_dump_max_retention       = lookup('redis_dump_max_retention')
   $redis_dump_appendonly_filename = lookup('redis_dump_appendonly_filename')
   $save_script_filename           = "save_redis_dump.sh"
-  $save_script_filepath           = "/USR/newtprod/${save_script_filename}"
+  $save_script_filepath           = "/opt/userdemo/${save_script_filename}"
   $redis_trib_version             = lookup('redis_trib_version', { 'default_value' => false })
   $redis_cluster_enable           = lookup('redis_cluster_enable', { 'default_value' => false })
   $redis_memory                   = lookup('redis_memory_limit')
   $redis_mempolicy                = lookup('redis_mempolicy')
   $redis_user                     = lookup('posc_generic_user')
   $redis_group                    = lookup('posc_generic_group')
-  $redis_dir                      = '/VAR/redis'
+  $redis_dir                      = '/var/redis'
   $redis_run_dir                  = "${redis_dir}/run"
+
   if ($redis_cluster_enable) {$redis_server_name = 'cluster-instance1'} else {$redis_server_name = 'instance1'}
   if ($redis_cluster_enable) {$redis_slave_server_name = 'cluster-instance2'}
 
@@ -67,7 +68,7 @@ class role::redis{
   }->
   file{ "${save_script_filepath}":
     ensure  => file,
-    content => template("role/redis/${save_script_filename}.erb"),
+    content => template("redis/${save_script_filename}.erb"),
     owner   => root,
     group   => root,
     mode    => '0755'

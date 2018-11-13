@@ -4,8 +4,6 @@
 #
 class tyk::install (
 
-  $source_url,
-  $tarball,
   $tyk_parent_dir,
   $user,
   $group,
@@ -49,7 +47,6 @@ class tyk::install (
     ensure  => 'directory',
     owner   => $user,
     group   => $group,
-    # pour migrer depuis la version ou /tyk etait un lien symbolique
     force   => true
   }->
   file{ "${tyk_parent_dir}/apps":
@@ -114,23 +111,8 @@ class tyk::install (
       content => template('tyk/tyk.conf.erb'),
       notify  => Service["tyk"]
     }
-  }->
-  tyk::tyk_middleware { 'getUserIdCCUMiddleware':
-    tyk_parent_dir      => $tyk_parent_dir,
-    user                => $user,
-    group               => $group,
-    posc_datastore_host => $posc_datastore_host,
-    posc_datastore_port => $posc_datastore_port,
-    service_path        => $url_baseCoeur_tokenCCU
-  }->
-  tyk::tyk_middleware { 'getUserIdTykMiddleware':
-    tyk_parent_dir      => $tyk_parent_dir,
-    user                => $user,
-    group               => $group,
-    posc_datastore_host => $posc_datastore_host,
-    posc_datastore_port => $posc_datastore_port,
-    service_path        => $url_baseCoeur_tokenTyk
   }
+
 
   # tyk-pump installation / configuration
   package { 'tyk-pump':
@@ -170,10 +152,6 @@ class tyk::install (
 
   if $::osfamily == "RedHat" and $::operatingsystem == "CentOS" and $::operatingsystemmajrelease == "7" {
 
-    file { "/etc/init.d/tyk":
-      ensure  => absent,
-      require => Tyk::Tyk_middleware["getUserIdTykMiddleware"]
-    }->
     file { "${tyk_parent_dir}/tyk.start":
       ensure  => file,
       content => template('tyk/tyk_start.erb'),
@@ -215,7 +193,6 @@ class tyk::install (
       owner   => $user,
       group   => $group,
       notify  => Service["tyk"],
-      require => tyk_middleware["getUserIdTykMiddleware"],
       before  => Service["tyk"]
     }
   }
@@ -224,12 +201,6 @@ class tyk::install (
     ensure  => $service_ensure,
     enable  => $service_enable,
     require => Package['tyk']
-  }
-
-  file { "/USR/newtprod/tyk_diff_dates.sh":
-    ensure  => file,
-    content => template('tyk/tyk_diff_dates.sh.erb'),
-    mode    => '0755'
   }
 
   $tyk_basic_auth_keys.each |$title, $auth| {

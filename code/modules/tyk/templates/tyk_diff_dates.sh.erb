@@ -3,7 +3,7 @@
 MAX_DURATION_IN_MINUTES=<%= @provision_max_duration_in_minutes %>
 API_ID="$1"
 USERNAME="$2"
-DATE_FILE="/USR/newtprod/action_basic_auth-${API_ID}-${USERNAME}"
+DATE_FILE="/opt/userdemo/action_basic_auth-${API_ID}-${USERNAME}"
 
 [[ -f $DATE_FILE ]] || touch $DATE_FILE
 

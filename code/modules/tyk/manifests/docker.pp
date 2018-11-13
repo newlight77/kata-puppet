@@ -95,9 +95,6 @@ class tyk::docker (
      "base_dir" => $base_dir
   }
 
-  create_resources('tyk::docker::app_keyless', hiera_hash('tyk_apps_keyless'), $default_values)
-  create_resources('tyk::docker::app_auth', hiera('tyk_apps_auth'), $default_values)
   create_resources('tyk::docker::app_hmac', hiera_hash('tyk_apps_hmac'), $default_values)
-  create_resources('tyk::docker::app_oauth2', hiera('tyk_apps_oauth2'), $default_values)
   create_resources('tyk::docker::app_basic', hiera_hash('tyk_apps_basic'), $default_values)
 }

@@ -17,7 +17,7 @@ define tyk::app_hmac (
   $user = hiera('posc_generic_user'),
   $group = hiera('posc_generic_group'),
   $hmac_allowed_clock_skew = hiera('tyk_hmac_allowed_clock_skew')
-  
+
 ) {
 
   file { "${tyk_parent_dir}/apps/app_${app_name}_hmac.json":
@@ -26,7 +26,6 @@ define tyk::app_hmac (
     mode    => '0644',
     owner   => $user,
     group   => $group,
-    require => Class['::tyk::install'],
   }~>
   exec { "Tyk reload for ${app_name}_hmac":
     command     => "curl -H \"X-Tyk-Authorization: ${token}\" http://localhost:${port}/tyk/reload/",

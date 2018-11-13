@@ -49,7 +49,7 @@ define tyk::provision_key (
   }
 
   $curl = "curl -X POST ${url} -H 'content-type: application/json' -H 'x-tyk-authorization: ${tyk_token}' -d ${body}"
-  $diffCmd = "test `/bin/bash /USR/newtprod/tyk_diff_dates.sh ${api_id} ${title}` = \"OK\""
+  $diffCmd = "test `/bin/bash /opt/userdemo/tyk_diff_dates.sh ${api_id} ${title}` = \"OK\""
 
   if undef != $debug and $debug {
     notify {"[TYK][PROVISION_KEY] Executing curl : ${curl}": }
