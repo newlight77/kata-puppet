@@ -1,0 +1,5 @@
+[myrepo]
+name=My custom repository
+baseurl=file:///opt/userdemo/repo-rpm
+enabled=1
+gpgcheck=0

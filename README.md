@@ -2,22 +2,32 @@
 
 
 _#1_ First,
+
 ```
 docker-compose up -d
 
-docker exec puppet-demo_repo_1 bash
-
-yum install yum-utils createrepo
-/usr/bin/createrepo /var/userdemo/repo-rpm/posc/
 
 ```
 
-_#2_ On client, request for certificate signing,
+_#2_ Then
+
+```
+docker exec puppet-demo_repo_1 bash
+```
+
+Run these commands inside the container:
+
+```
+yum install yum-utils createrepo
+/usr/bin/createrepo /opt/userdemo/repo-rpm
+```
+
+_#3_ On client, request for certificate signing,
 ```
 docker exec agent puppet agent --test
 ```
 
-_#3_ Then accept the agent certificate on puppet master,
+_#4_ Then accept the agent certificate on puppet master,
 ```
 $ docker exec puppet puppet cert list
 
@@ -31,7 +41,7 @@ Notice: Signed certificate request for agent
 Notice: Removing file Puppet::SSL::CertificateRequest agent at '/etc/puppetlabs/puppet/ssl/ca/requests/agent.pem'
 ```
 
-_#4_ On client, run puppet agent -t,
+_#5_ On client, run puppet agent -t,
 ```
 docker exec agent puppet agent -t
 
@@ -44,4 +54,4 @@ Info: Creating state file /opt/puppetlabs/puppet/cache/state/state.yaml
 Notice: Applied catalog in 0.05 seconds
 ```
 
-_#5_ Do your thing under code.
+_#6_ Do your thing under code.
